@@ -5,9 +5,9 @@ Feature: remover review
 
 Scenario: Reviews exibidas na home
   Given eu estou logado como "usuário comum"
-  And o sistema tem cadastrado apenas as reviews de "Fulano", "Sicrano" e "Beltrano" com suas músicas e notas
+  And o sistema tem cadastrado apenas as reviews de "Renato", "Tom" e "Charles" com suas músicas e notas
   When eu acesso a página inicial
-  Then eu vejo as reviews de "Fulano", "Sicrano" e "Beltrano" com suas músicas e notas
+  Then eu vejo as reviews de "Renato", "Tom" e "Charles" com suas músicas e notas
 
 Scenario: Administrador remove review com sucesso
   Given eu estou na página "Home"
@@ -21,7 +21,7 @@ Scenario: Administrador remove review com sucesso
 Scenario: Administrador cancela exclusão
   Given eu estou logado como administrador
   And eu estou na página "Home"
-  When eu requisito a exclusão da review de "Something" feita por “Sicrano”
+  When eu requisito a exclusão da review de "Something" feita por “Tom”
   And eu cancelo a exclusão
   Then a review "Something" permanece na lista de reviews
 
