@@ -12,8 +12,8 @@ Scenario: Reviews exibidas na home
 Scenario: Administrador remove review com sucesso
   Given eu estou na página "Home"
   And eu estou logado como administrador
-  And eu vejo uma review "Let Down" de "Fulano"
-  When eu clico para excluir review de "Let Down" feita por “Fulano”
+  And eu vejo uma lista com as reviews "Let Down" de "Renato" e "Something" feita por "Tom"
+  When eu clico para excluir review de "Let Down" feita por Renato”
   Then a review "Let Down" de "Fulano" desaparece da lista
   And sou redirecionado para a página "Home"
 
