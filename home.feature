@@ -9,6 +9,7 @@ Scenario: Administrador remove review com sucesso
   And eu vejo uma review "Let Down" de "Fulano"
   When eu clico para excluir review de "Let Down" feita por “Fulano”
   Then a review "Let Down" de "Fulano" desaparece da lista
+  And sou redirecionado para a página "Home"
 
 
 Scenario: Administrador cancela exclusão
