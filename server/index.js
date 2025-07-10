@@ -15,15 +15,21 @@ app.use(express.json())
 app.use(cookieParser())
 
 // Routes imports
-import pingRoutes from './routes/ping.routes.js'
-import bookRoutes from './routes/books.routes.js'
-import authRoutes from './routes/oldauth.routes.js'
+import userRoutes from './routes/user.routes.js'
+import reportRoutes from './routes/report.routes.js'
+import reviewRoutes from './routes/review.routes.js'
+import followRoutes from './routes/follow.routes.js'
+import musicRoutes from './routes/music.routes.js'
 
-app.use('/ping', pingRoutes)
-app.use('/books', bookRoutes)
-app.use('/auth', authRoutes)
+// Importando as rotas projeto abaixo
+app.use('/users', userRoutes)
+app.use('/reports', reportRoutes)
+app.use('/reviews', reviewRoutes)
+app.use('/follows', followRoutes)
+app.use('/musics', musicRoutes)
+
 
 app.listen(4000, () => {
-  //connectToMongoDB()
+  connectToMongoDB()
   console.log("Running at Port 4000")
 });
