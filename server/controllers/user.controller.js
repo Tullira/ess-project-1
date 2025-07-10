@@ -38,3 +38,12 @@ export const getUsers = async (req, res) => {
       res.status(500).json({ message: 'Erro no servidor', error: error.message });
     }
 };
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params
+    const user = await User.findById()
+  } catch (error) {
+  res.status(500).json({ message: 'Erro no servidor', error: error.message });
+    }
+}
