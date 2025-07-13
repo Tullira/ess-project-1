@@ -1,12 +1,30 @@
-import express from 'express'; // Default
+import express from "express";
 
 // Import "user" controller functions
-import { createUser, getUsers } from '../controllers/user.controller.js';
+import {
+  createUser,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+} from "../controllers/user.controller.js";
 
-const router = express.Router(); // Default
+const router = express.Router();
 
 // Define routes for "user" operations
-router.post('/', createUser); 
-router.get('/', getUsers);
+// CREATE - POST /api/users
+router.post("/", createUser);
 
-export default router; // Default
+// READ ALL - GET /api/users
+router.get("/", getUsers);
+
+// READ ONE - GET /api/users/:id
+router.get("/:id", getUserById);
+
+// UPDATE - PUT /api/users/:id
+router.put("/:id", updateUser);
+
+// DELETE - DELETE /api/users/:id
+router.delete("/:id", deleteUser);
+
+export default router;
