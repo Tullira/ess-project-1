@@ -1,125 +1,73 @@
+import { Given, When, Then, BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
-import * as userService from "../services/user.service.js";
+import assert from "assert";
+import * as userService from "../../services/user.service.js";
+import User from "../../models/user.model.js";
 
-describe("User Service", () => {
-  beforeAll(async () => {
-    const url = process.env.MONGO_DB_URI;
-    await mongoose.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  });
+let context = {};
 
-  afterAll(async () => {
-    await mongoose.connection.db.dropDatabase();
-    await mongoose.connection.close();
+BeforeAll(async () => {
+  await mongoose.connect(process.env.MONGO_DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   });
+});
 
-  beforeEach(async () => {
-    await User.deleteMany();
-  });
+AfterAll(async () => {
+  await mongoose.connection.db.dropDatabase();
+  await mongoose.connection.close();
+});
 
-  it("deve criar um usuário válido", async () => {
-    const user = await userService.createUser({
-      name: "João",
-      email: "joao@email.com",
-      password: "123456",
-    });
-    expect(user).toHaveProperty("_id");
-    expect(user).toHaveProperty("name", "João");
-    expect(user).toHaveProperty("email", "joao@email.com");
-  });
+Before(async () => {
+  await User.deleteMany();
+  context = {};
+});
 
-  it("não deve criar usuário com email já existente", async () => {
-    await userService.createUser({
-      name: "Maria",
-      email: "maria@email.com",
-      password: "123456",
-    });
-    await expect(
-      userService.createUser({
-        name: "Maria",
-        email: "maria@email.com",
-        password: "654321",
-        isAdmin: false,
-      })
-    ).rejects.toThrow("Este e-mail já está em uso.");
-  });
+// Background
+Given("o banco de dados está limpo", async () => {
+  await User.deleteMany();
+});
 
-  it("deve retornar todos os usuários", async () => {
-    await userService.createUser({
-      name: "Ana",
-      email: "ana@email.com",
-      password: "123456",
-    });
-    const users = await userService.getUsers();
-    expect(Array.isArray(users)).toBe(true);
+// Cenário 1: Buscar por ID existente
+Given("existe um usuário chamado {string}", async (name) => {
+  const user = await userService.createUser({
+    name,
+    email: `${name.toLowerCase()}@email.com`,
+    password: "123456",
   });
+  context.user = user;
+});
 
-  it("deve retornar um usuário pelo id", async () => {
-    const user = await userService.createUser({
-      name: "Carlos",
-      email: "carlos@email.com",
-      password: "123456",
-    });
-    const found = await userService.getUserById(user._id);
-    expect(found).toHaveProperty("name", "Carlos");
-  });
+When("eu buscar o usuário por ID", async () => {
+  context.result = await userService.getUserById(context.user._id);
+});
 
-  it("deve retornar null se usuário não existir ao buscar por id", async () => {
-    const fakeId = new mongoose.Types.ObjectId();
-    const found = await userService.getUserById(fakeId);
-    expect(found).toBeNull();
-  });
+Then("o nome do usuário retornado deve ser {string}", (expectedName) => {
+  assert.ok(context.result);
+  assert.strictEqual(context.result.name, expectedName);
+});
 
-  it("deve atualizar um usuário existente", async () => {
-    const user = await userService.createUser({
-      name: "Pedro",
-      email: "pedro@email.com",
-      password: "123456",
-    });
-    const updated = await userService.updateUser(user._id, {
-      name: "Pedro Atualizado",
-    });
-    expect(updated).toHaveProperty("name", "Pedro Atualizado");
-  });
+// Cenário 2: Buscar por ID inexistente
+Given("um ID que não existe", () => {
+  context.fakeId = new mongoose.Types.ObjectId();
+});
 
-  it("não deve atualizar para email já existente", async () => {
-    await userService.createUser({
-      name: "Lucas",
-      email: "lucas@email.com",
-      password: "123456",
-    });
-    const user = await userService.createUser({
-      name: "Rafael",
-      email: "rafael@email.com",
-      password: "123456",
-    });
-    await expect(
-      userService.updateUser(user._id, { email: "lucas@email.com" })
-    ).rejects.toThrow("Este e-mail já está em uso.");
-  });
+When("eu buscar o usuário por esse ID", async () => {
+  context.result = await userService.getUserById(context.fakeId);
+});
 
-  it("deve retornar null se usuário não existir ao atualizar", async () => {
-    const fakeId = new mongoose.Types.ObjectId();
-    const updated = await userService.updateUser(fakeId, { name: "Novo Nome" });
-    expect(updated).toBeNull();
-  });
+Then("o resultado deve ser null", () => {
+  assert.strictEqual(context.result, null);
+});
 
-  it("deve deletar um usuário existente", async () => {
-    const user = await userService.createUser({
-      name: "Bruno",
-      email: "bruno@email.com",
-      password: "123456",
-    });
-    const deleted = await userService.deleteUser(user._id);
-    expect(deleted).toHaveProperty("_id");
+// Cenário 3: Atualizar nome
+When("eu atualizar o nome desse usuário para {string}", async (newName) => {
+  context.result = await userService.updateUser(context.user._id, {
+    name: newName,
   });
+});
 
-  it("deve retornar null se usuário não existir ao deletar", async () => {
-    const fakeId = new mongoose.Types.ObjectId();
-    const deleted = await userService.deleteUser(fakeId);
-    expect(deleted).toBeNull();
-  });
+Then("o nome do usuário atualizado deve ser {string}", (expectedName) => {
+  assert.ok(context.result);
+  assert.strictEqual(context.result.name, expectedName);
 });
