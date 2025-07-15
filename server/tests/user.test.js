@@ -4,7 +4,7 @@ import * as userService from "../services/user.service.js";
 
 describe("User Service", () => {
   beforeAll(async () => {
-    const url = "mongodb+srv://tfcl:byBDc2RpYRBYGiQk@cluster0.q8lmdsw.mongodb.net/";
+    const url = process.env.MONGO_DB_URI;
     await mongoose.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
