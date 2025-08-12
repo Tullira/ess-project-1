@@ -9,9 +9,6 @@ import { setAdmin, setCommonUser } from "../../../client/src/currentUser";
 // 	I want to remover uma review da home
 // 	So that ela não fique mais disponível para os usuários
 
-
-
-
 // Scenario: Administrador cancela remoção de review
 // 	 Given eu estou na página inicial logado como "administrador"
 // 	 And eu vejo uma review "Baby" de "Paulo Miranda"
@@ -28,27 +25,21 @@ Given("eu estou na página inicial logado como {string}", (role) => {
 });
 
 Given("eu vejo uma review {string} de {string}", (songTitle, authorName) => {
-  cy.get('[data-cy="review-card"]').contains(songTitle).should("be.visible");
-
-  cy.get('[data-cy="review-card"]').contains(authorName).should("be.visible");
+  cy.get('[data-cy="review-card"]')
+    .filter(`:contains("${songTitle}"):contains("${authorName}")`)
+    .should("exist");
 });
 
 When(
   "eu clico para excluir review de {string} feita por {string}",
   (songTitle, authorName) => {
     cy.get('[data-cy="review-card"]')
-      .contains(songTitle)
-      .parent()
-      .parent()
-      .contains(authorName)
-      .parent()
+      .filter(`:contains("${songTitle}"):contains("${authorName}")`)
       .within(() => {
         cy.get('[data-cy="delete-button"]').click();
       });
   }
 );
-
-
 
 When("cancelo a operação", () => {
   cy.get('[data-cy="cancel-delete-button"]').click();
@@ -57,7 +48,9 @@ When("cancelo a operação", () => {
 Then(
   "a review {string} de {string} continua na página",
   (songTitle, authorName) => {
-    cy.get('[data-cy="review-card"]').contains(songTitle).parent().parent().contains(authorName).should("exist");
+    cy.get('[data-cy="review-card"]')
+      .filter(`:contains("${songTitle}"):contains("${authorName}")`)
+      .should("exist");
   }
 );
 
@@ -77,11 +70,7 @@ Then(
   "a review {string} de {string} é removida da página",
   (songTitle, authorName) => {
     cy.get('[data-cy="review-card"]')
-      .contains(songTitle)
-      .parent()
-      .parent()
-      .contains(authorName)
+      .filter(`:contains("${songTitle}"):contains("${authorName}")`)
       .should("not.exist");
   }
 );
-

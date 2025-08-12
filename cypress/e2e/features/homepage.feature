@@ -6,14 +6,14 @@ Feature: Remover review da home
 
 	Scenario: Administrador cancela remoção de review
 	 Given eu estou na página inicial logado como "administrador"
-	 And eu vejo uma review "Baby" de "Paulo Miranda"
-	 When eu clico para excluir review de "Baby" feita por "Paulo Miranda"
+	 And eu vejo uma review "Silver Springs" de "Paulo Miranda"
+	 When eu clico para excluir review de "Silver Springs" feita por "Paulo Miranda"
      And cancelo a operação
-	 Then a review "Baby" de "Paulo Miranda" continua na página
+	 Then a review "Silver Springs" de "Paulo Miranda" continua na página
 
 	Scenario: Administrador remove review com sucesso
 	 Given eu estou na página inicial logado como "administrador"
-	 And eu vejo uma review "Baby" de "Paulo Miranda"
-	 When eu clico para excluir review de "Baby" feita por "Paulo Miranda"
+	 And eu vejo uma review "Silver Springs" de "Paulo Miranda"
+	 When eu clico para excluir review de "Silver Springs" feita por "Paulo Miranda"
 	 And confirmo a operação
-	 Then a review "Baby" de "Paulo Miranda" é removida da página
+	 Then a review "Silver Springs" de "Paulo Miranda" é removida da página
